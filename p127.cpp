@@ -57,42 +57,41 @@ int main() {
         std::set<Uint>::const_iterator ra_end = rad_a.end();
 
         Uint step = (a & 1) ? 1 : 2; // if a is even b ought to be odd
-        for (Uint b = a+1; b < N ; b += step) {
+        Uint b_end = N - a;
+        for (Uint b = a+1; b < b_end ; b += step) {
             Uint c = a + b;
-            if (c < N) {
-                bool ab_coprimes = true;
-                const std::set<Uint>& rad_b = rad(b, prim);
+            bool ab_coprimes = true;
+            const std::set<Uint>& rad_b = rad(b, prim);
 
-                for (std::set<Uint>::const_iterator ia = rad_a.begin(); ia != ra_end && ab_coprimes; ++ia) {
-                    if (rad_b.find(*ia) != rad_b.end())
-                        ab_coprimes = false;
+            for (std::set<Uint>::const_iterator ia = rad_a.begin(); ia != ra_end && ab_coprimes; ++ia) {
+                if (rad_b.find(*ia) != rad_b.end())
+                    ab_coprimes = false;
+            }
+
+            if (ab_coprimes) {
+                const std::set<Uint>& rad_c = rad(c, prim);
+                bool abc_coprimes = true;
+
+                std::set<Uint>::const_iterator rc_end = rad_c.end();
+                for (std::set<Uint>::const_iterator ic = rad_c.begin(); ic != rc_end && abc_coprimes; ++ic) {
+                    if (rad_a.find(*ic) != rad_a.end())
+                        abc_coprimes = false;
+                    if (rad_b.find(*ic) != rad_b.end())
+                        abc_coprimes = false;
                 }
 
-                if (ab_coprimes) {
-                    const std::set<Uint>& rad_c = rad(c, prim);
-                    bool abc_coprimes = true;
+                if (abc_coprimes) {
+                    const std::set<Uint>& rad_abc = rad( a * b * c, prim);
 
-                    std::set<Uint>::const_iterator rc_end = rad_c.end();
-                    for (std::set<Uint>::const_iterator ic = rad_c.begin(); ic != rc_end && abc_coprimes; ++ic) {
-                        if (rad_a.find(*ic) != rad_a.end())
-                            abc_coprimes = false;
-                        if (rad_b.find(*ic) != rad_b.end())
-                            abc_coprimes = false;
+                    Uint rad_product = 1;
+                    std::set<Uint>::const_iterator end = rad_abc.end();
+                    for (std::set<Uint>::const_iterator i = rad_abc.begin(); i != end ; ++i) {
+                        rad_product *= *i;
                     }
 
-                    if (abc_coprimes) {
-                        const std::set<Uint>& rad_abc = rad( a * b * c, prim);
-
-                        Uint rad_product = 1;
-                        std::set<Uint>::const_iterator end = rad_abc.end();
-                        for (std::set<Uint>::const_iterator i = rad_abc.begin(); i != end ; ++i) {
-                            rad_product *= *i;
-                        }
-
-                        if (rad_product < c) {
-                            std::cout << a << " " << b << " " << c << "  " << rad_product << std::endl;
-                            sum_c += c;
-                        }
+                    if (rad_product < c) {
+                        std::cout << a << " " << b << " " << c << "  " << rad_product << std::endl;
+                        sum_c += c;
                     }
                 }
             }
