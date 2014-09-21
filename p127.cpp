@@ -1,84 +1,105 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <map>
 
-std::set<int> rad(int val, const std::vector<int>& prim) {
-    std::set<int>  ret;
-    for (int j = 0; prim[j] <= val && val != 1; ++j) {
-        if (val % prim[j] == 0) {
-            val /= prim[j];
+typedef unsigned long long Uint;
+
+const std::set<Uint>& rad(Uint val, const std::vector<Uint>& prim) {
+    static std::map<Uint, std::set<Uint> > rads;
+
+    if (rads.find(val) != rads.end())
+        return rads[val];
+
+    std::set<Uint>  ret;
+    Uint val_loc = val;
+    for (Uint j = 0; prim[j] <= val_loc && val_loc != 1; ++j) {
+        if (val_loc % prim[j] == 0) {
+            val_loc /= prim[j];
             ret.insert(prim[j]);
-            while (val % prim[j] == 0)
-                val /= prim[j];
+            while (val_loc % prim[j] == 0)
+                val_loc /= prim[j];
         }
     }
 
-    return ret;
+    rads[val] = ret;
+    return rads[val];
 }
 
 int main() {
 
-    const int N = 1000;
+    //const Uint N = 1000;
+    const Uint N = 120000;
 
     // -------------------------------------------
     // seive
-    std::vector<int> p(2*N);
+    std::vector<Uint> p(N);
     std::fill(p.begin(), p.end(), 1);
     p[0] = p[1] = 0;
-    for (int i = 2; i < N; ) {
+    for (Uint i = 2; i < N; ) {
         while (!p[i])
             ++i;
-        for (int j = 2 * i; j < N; j += i)
+        for (Uint j = 2 * i; j < N; j += i)
             p[j] = 0;
         ++i;
     }
 
-    std::vector<int> prim;
-    for (int i = 0; i < p.size(); ++i) 
+    std::vector<Uint> prim;
+    for (Uint i = 0; i < p.size(); ++i) 
         if (p[i])
             prim.push_back(i);
 
     std::cout << "sieve is done\n";
 
-    for (int a = 2; a < N; ++a) {
-        std::set<int> rad_a = rad(a, prim);
-        for (int b = a+1; b < N ; ++b) {
-            bool ab_coprimes = true;
-            std::set<int> rad_b = rad(b, prim);
+    Uint sum_c = 0;
+    for (Uint a = 1; a < N; ++a) {
+        const std::set<Uint>& rad_a = rad(a, prim);
+        Uint step = (a & 1) ? 1 : 2; // if a is even b ought to be odd
+        for (Uint b = a+1; b < N ; b += step) {
+            Uint c = a + b;
+            if (c < N) {
+                bool ab_coprimes = true;
+                const std::set<Uint>& rad_b = rad(b, prim);
 
-            std::set<int>::const_iterator ra_end = rad_a.end();
-            for (std::set<int>::const_iterator ia = rad_a.begin(); ia != ra_end && ab_coprimes; ++ia) {
-                if (rad_b.find(*ia) != rad_b.end())
-                    ab_coprimes = false;
-            }
-
-            if (ab_coprimes) {
-                int c = a + b;
-                std::set<int> rad_c = rad(c, prim);
-                bool abc_coprimes = true;
-
-                for (std::set<int>::const_iterator ia = rad_a.begin(); ia != ra_end && abc_coprimes; ++ia) {
-                    if (rad_c.find(*ia) != rad_c.end())
-                        abc_coprimes = false;
+                std::set<Uint>::const_iterator ra_end = rad_a.end();
+                for (std::set<Uint>::const_iterator ia = rad_a.begin(); ia != ra_end && ab_coprimes; ++ia) {
+                    if (rad_b.find(*ia) != rad_b.end())
+                        ab_coprimes = false;
                 }
 
-                if (abc_coprimes) {
-                    std::set<int> rad_abc = rad( a * b * c, prim);
+                if (ab_coprimes) {
+                    const std::set<Uint>& rad_c = rad(c, prim);
+                    bool abc_coprimes = true;
 
-                    int rad_product = 1;
-                    std::set<int>::const_iterator end = rad_abc.end();
-                    for (std::set<int>::const_iterator i = rad_abc.begin(); i != end ; ++i) {
-                        rad_product *= *i;
+                    std::set<Uint>::const_iterator rc_end = rad_c.end();
+                    for (std::set<Uint>::const_iterator ic = rad_c.begin(); ic != rc_end && abc_coprimes; ++ic) {
+                        if (rad_a.find(*ic) != rad_a.end())
+                            abc_coprimes = false;
+                        if (rad_b.find(*ic) != rad_b.end())
+                            abc_coprimes = false;
                     }
 
-                    if (rad_product < c && c < N) {
-                        std::cout << a << " " << b << " " << c << std::endl;
+                    if (abc_coprimes) {
+                        const std::set<Uint>& rad_abc = rad( a * b * c, prim);
+
+                        Uint rad_product = 1;
+                        std::set<Uint>::const_iterator end = rad_abc.end();
+                        for (std::set<Uint>::const_iterator i = rad_abc.begin(); i != end ; ++i) {
+                            rad_product *= *i;
+                        }
+
+                        if (rad_product < c) {
+                            std::cout << a << " " << b << " " << c << "  " << rad_product << std::endl;
+                            sum_c += c;
+                        }
                     }
                 }
             }
-
         }
     }
+
+
+    std::cout << "sum_c: " << sum_c << std::endl;
 
     return 0;
 }
