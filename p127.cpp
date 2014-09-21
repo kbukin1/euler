@@ -28,8 +28,8 @@ const std::set<Uint>& rad(Uint val, const std::vector<Uint>& prim) {
 
 int main() {
 
-    //const Uint N = 1000;
-    const Uint N = 120000;
+    const Uint N = 1000;
+    //const Uint N = 120000;
 
     // -------------------------------------------
     // seive
@@ -54,6 +54,8 @@ int main() {
     Uint sum_c = 0;
     for (Uint a = 1; a < N; ++a) {
         const std::set<Uint>& rad_a = rad(a, prim);
+        std::set<Uint>::const_iterator ra_end = rad_a.end();
+
         Uint step = (a & 1) ? 1 : 2; // if a is even b ought to be odd
         for (Uint b = a+1; b < N ; b += step) {
             Uint c = a + b;
@@ -61,7 +63,6 @@ int main() {
                 bool ab_coprimes = true;
                 const std::set<Uint>& rad_b = rad(b, prim);
 
-                std::set<Uint>::const_iterator ra_end = rad_a.end();
                 for (std::set<Uint>::const_iterator ia = rad_a.begin(); ia != ra_end && ab_coprimes; ++ia) {
                     if (rad_b.find(*ia) != rad_b.end())
                         ab_coprimes = false;
