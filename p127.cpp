@@ -60,6 +60,10 @@ int main() {
         Uint b_end = N - a;
         for (Uint b = a+1; b < b_end ; b += step) {
             Uint c = a + b;
+
+            if ((c & 1) == 0 && ((a & 1) == 0 || (b & 1) == 0))
+                continue;
+
             bool ab_coprimes = true;
             const std::set<Uint>& rad_b = rad(b, prim);
 
@@ -69,8 +73,8 @@ int main() {
             }
 
             if (ab_coprimes) {
-                const std::set<Uint>& rad_c = rad(c, prim);
                 bool abc_coprimes = true;
+                const std::set<Uint>& rad_c = rad(c, prim);
 
                 std::set<Uint>::const_iterator rc_end = rad_c.end();
                 for (std::set<Uint>::const_iterator ic = rad_c.begin(); ic != rc_end && abc_coprimes; ++ic) {
