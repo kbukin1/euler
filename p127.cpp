@@ -26,10 +26,20 @@ const std::set<Uint>& rad(Uint val, const std::vector<Uint>& prim) {
     return rads[val];
 }
 
+Uint rad_product(const std::set<Uint>& r) {
+    Uint ret = 1;
+    std::set<Uint>::const_iterator end = r.end();
+    for (std::set<Uint>::const_iterator i = r.begin(); i != end ; ++i) {
+        ret *= *i;
+    }
+
+    return ret;
+}
+
 int main() {
 
-    const Uint N = 1000;
-    //const Uint N = 120000;
+    //const Uint N = 1000;
+    const Uint N = 120000;
 
     // -------------------------------------------
     // seive
@@ -73,6 +83,7 @@ int main() {
             }
 
             if (ab_coprimes) {
+#if 0
                 bool abc_coprimes = true;
                 const std::set<Uint>& rad_c = rad(c, prim);
 
@@ -80,24 +91,24 @@ int main() {
                 for (std::set<Uint>::const_iterator ic = rad_c.begin(); ic != rc_end && abc_coprimes; ++ic) {
                     if (rad_a.find(*ic) != rad_a.end())
                         abc_coprimes = false;
-                    if (rad_b.find(*ic) != rad_b.end())
-                        abc_coprimes = false;
+                    //if (rad_b.find(*ic) != rad_b.end()) // no need to check, since b and c are always
+                        //abc_coprimes = false;           // coprimes
                 }
+#endif
+                // if (abc_coprimes) {
+                // if (1) {
+                    // const std::set<Uint>& rad_abc = rad( a * b * c, prim);
+                    const std::set<Uint>& rad_c = rad( c, prim);
 
-                if (abc_coprimes) {
-                    const std::set<Uint>& rad_abc = rad( a * b * c, prim);
+                    Uint rad_p = rad_product(rad_a) * 
+                                 rad_product(rad_b) *
+                                 rad_product(rad_c);
 
-                    Uint rad_product = 1;
-                    std::set<Uint>::const_iterator end = rad_abc.end();
-                    for (std::set<Uint>::const_iterator i = rad_abc.begin(); i != end ; ++i) {
-                        rad_product *= *i;
-                    }
-
-                    if (rad_product < c) {
+                    if (rad_p < c) {
                         std::cout << a << " " << b << " " << c << "  " << rad_product << std::endl;
                         sum_c += c;
                     }
-                }
+                // }
             }
         }
     }
