@@ -61,6 +61,7 @@ int main() {
 
     std::cout << "sieve is done\n";
 
+    // -------------------------------------------
     Uint sum_c = 0;
     for (Uint a = 1; a < N; ++a) {
         const std::set<Uint>& rad_a = rad(a, prim);
