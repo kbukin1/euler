@@ -1,0 +1,6 @@
+(m,n) is a binomial coefficient.
+
+There are (m+k,m) paths through k*m grid. That is b/c m down paths has to be
+along k+1 possible paths to go down (m objects in k+1 boxes).
+
+Hense the answer is (20+20,20) = (40,20) = 40!/(20!)^2
