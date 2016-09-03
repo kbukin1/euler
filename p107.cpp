@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include <set>
+#include <algorithm>
 
 typedef std::vector<int> Raw;
 typedef std::vector<Raw> Matrix;

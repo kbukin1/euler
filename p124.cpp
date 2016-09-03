@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 struct Cmp {
     bool operator() (const std::pair<int, int>& a, const std::pair<int, int>& b) const {

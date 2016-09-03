@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <iterator>
+#include <algorithm>
 
 typedef signed long long Int;
 
