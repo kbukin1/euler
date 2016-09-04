@@ -98,7 +98,7 @@ int amain() {
 
 bool pol(Int n) {
     char num[32];
-    sprintf(num, "%d", n);
+    sprintf(num, "%llu", n);
     size_t size = strlen(num);
     size_t hsize = strlen(num)/2;
 
