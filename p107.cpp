@@ -80,8 +80,14 @@ bool block_structure(const Matrix& m) {
 }
 
 int main() {
+    const char* file_name = "p107_network.txt";
     // std::ifstream in("p107_network_s.txt");
-    std::ifstream in("p107_network.txt");
+    std::ifstream in(file_name);
+
+    if (!in) {
+        std::cout << "cannot open " << file_name << std::endl;
+        return 1;
+    }
 
     Matrix matrix;
 
